@@ -1,23 +1,27 @@
 --- Folder Structure ---
-.gitignore
+.project_structure_ignore
 extension.js
 jsconfig.json
 package.json
+project_structure_filter.js
+project_structure_filter.py
 
 --- File Contents ---
 
---- File: .gitignore ---
-node_modules
-.vscode-test/
-*.vsix
+--- File: .project_structure_ignore ---
+test
+README.md
+CHANGELOG.md
+LICENSE.txt
+vsc-extension-quickstart.md
 
 
 --- File: extension.js ---
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-const vscode = require('vscode');
-const fs = require('fs');
-const path = require('path');
+const vscode = require('vscode')
+const fs = require('fs')
+const path = require('path')
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -26,129 +30,170 @@ const path = require('path');
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
+  // Use the console to output diagnostic information (console.log) and errors (console.error)
+  // This line of code will only be executed once when your extension is activated
+  console.log('Congratulations, your extension "vscode-project-structure" is now active!')
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "vscode-project-structure" is now active!');
+  // The command has been defined in the package.json file
+  // Now provide the implementation of the command with  registerCommand
+  // The commandId parameter must match the command field in package.json
+  // let disposable = vscode.commands.registerCommand('vscode-project-structure.helloWorld', function () {
+  // 	// The code you place here will be executed every time your command is executed
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	// let disposable = vscode.commands.registerCommand('vscode-project-structure.helloWorld', function () {
-	// 	// The code you place here will be executed every time your command is executed
+  // 	// Display a message box to the user
+  // 	vscode.window.showInformationMessage('Hello World from vscode-project-structure!');
+  // });
 
-	// 	// Display a message box to the user
-	// 	vscode.window.showInformationMessage('Hello World from vscode-project-structure!');
-	// });
+  let disposable = vscode.commands.registerCommand('extension.generateProjectStructure', () => {
+    generateProjectStructure()
+  })
 
-	let disposable = vscode.commands.registerCommand('extension.generateProjectStructure', () => {
-		generateProjectStructure();
-	})
+  context.subscriptions.push(disposable)
+}
 
-	context.subscriptions.push(disposable);
+function getConfig() {
+  return vscode.workspace.getConfiguration('vscodeProjectStructure')
 }
 
 function generateProjectStructure() {
-    const rootPath = vscode.workspace.workspaceFolders
-        ? vscode.workspace.workspaceFolders[0].uri.fsPath
-        : undefined;
+  const rootPath = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined
 
-    if (!rootPath) {
-        vscode.window.showErrorMessage('No workspace folder is open');
-        return;
+  if (!rootPath) {
+    vscode.window.showErrorMessage('No workspace folder is open')
+    return
+  }
+
+  // Defines the path to the output folder
+  const outputFolderName = vscode.workspace.getConfiguration('vscodeProjectStructure').get('outputFolderPath')
+  const outputFolderPath = path.join(rootPath, outputFolderName)
+
+  // Defines the path to the ignore file within the docs folder
+  const ignoreFilePath = path.join(outputFolderPath, '.project_structure_ignore')
+  const filterFilePath = path.join(outputFolderPath, '.project_structure_filter')
+
+  // Creates the output folder if it doesn't exist
+  if (!fs.existsSync(outputFolderPath)) {
+    fs.mkdirSync(outputFolderPath)
+  }
+
+  let ignoreFiles = []
+  let filterFiles = []
+
+  // Extract list of patters for files to ignore
+  if (fs.existsSync(ignoreFilePath)) {
+    const ignoreFileContent = fs.readFileSync(ignoreFilePath, 'utf-8')
+    ignoreFiles = ignoreFileContent.split('\n').filter(line => line.trim() !== '')
+  }
+
+  // Merge ignore file patterns with those from .gitignore file if this option is enabled
+  if (getConfig().useGitIgnore) {
+    const gitIgnorePath = path.join(rootPath, '.gitignore')
+    if (fs.existsSync(gitIgnorePath)) {
+      const gitIgnoreContent = fs.readFileSync(gitIgnorePath, 'utf-8')
+      const gitIgnorePatterns = gitIgnoreContent.split('\n').filter(line => line.trim() !== '')
+      ignoreFiles = [...ignoreFiles, ...gitIgnorePatterns]
     }
+  }
 
-    const ignoreFilePath = path.join(rootPath, '.project_structure_ignore');
-    let ignoreFiles = [];
+  let output = ''
+  output += '--- Folder Structure ---\n'
+  output += getFolderStructure(rootPath, ignoreFiles, 0)
 
-    if (fs.existsSync(ignoreFilePath)) {
-        const ignoreFileContent = fs.readFileSync(ignoreFilePath, 'utf-8');
-        ignoreFiles = ignoreFileContent.split('\n').filter(line => line.trim() !== '');
-    }
+  output += '\n--- File Contents ---\n'
+  output += getFileContents(rootPath, ignoreFiles)
 
-    let output = '';
-    output += '--- Folder Structure ---\n';
-    output += getFolderStructure(rootPath, ignoreFiles, 0);
+  const outputPath = path.join(outputFolderPath, 'project_structure.txt')
+  fs.writeFileSync(outputPath, output)
 
-    output += '\n--- File Contents ---\n';
-    output += getFileContents(rootPath, ignoreFiles);
-
-    const outputPath = path.join(rootPath, 'project_structure.txt');
-    fs.writeFileSync(outputPath, output);
-
-    vscode.window.showInformationMessage('Project structure generated successfully');
+  vscode.window.showInformationMessage('Project structure generated successfully')
 }
-
 
 function getFolderStructure(dir, ignoreFiles, level) {
-    let output = '';
+  let output = ''
 
-    if (fs.existsSync(dir)) {
-        const files = fs.readdirSync(dir);
-        files.forEach((file, index) => {
-            const fullPath = path.join(dir, file);
+  if (fs.existsSync(dir)) {
+    const files = fs.readdirSync(dir)
+    files.forEach((file, index) => {
+      const fullPath = path.join(dir, file)
+      const relativePath = path.relative(process.cwd(), fullPath)
 
-            if (ignoreFiles.includes(file)) {
-                return;
-            }
+      if (shouldIgnore(relativePath, ignoreFiles)) {
+        return
+      }
 
-            const isLastFile = index === files.length - 1;
-            const prefix = level === 0 ? '' : isLastFile ? '└── ' : '├── ';
-            const indent = ' '.repeat(level * 4) + (level > 0 ? prefix : '');
+      const isLastFile = index === files.length - 1
+      const prefix = level === 0 ? '' : isLastFile ? '└── ' : '├── '
+      const indent = ' '.repeat(level * 4) + (level > 0 ? prefix : '')
 
-            if (fs.lstatSync(fullPath).isDirectory()) {
-                output += indent + `[${file}]\n`;
-                output += getFolderStructure(fullPath, ignoreFiles, level + 1);
-            } else {
-                output += indent + file + '\n';
-            }
-        });
-    }
+      if (fs.lstatSync(fullPath).isDirectory()) {
+        output += indent + `[${file}]\n`
+        output += getFolderStructure(fullPath, ignoreFiles, level + 1)
+      } else {
+        output += indent + file + '\n'
+      }
+    })
+  }
 
-    return output;
+  return output
 }
 
-function getFileContents(dir, ignoreFiles) {
-    let output = '';
+function getFileContents(dir, ignoreFiles, filterFiles) {
+  let output = ''
 
-    const readDirectory = (directory) => {
-        let results = [];
-        const files = fs.readdirSync(directory);
+  const readDirectory = directory => {
+    let results = []
+    const files = fs.readdirSync(directory)
 
-        files.forEach(file => {
-            const fullPath = path.join(directory, file);
+    files.forEach(file => {
+      const fullPath = path.join(directory, file)
+      const relativePath = path.relative(process.cwd(), fullPath)
 
-            if (ignoreFiles.includes(file)) {
-                return;
-            }
+      if (shouldIgnore(relativePath, ignoreFiles)) {
+        return
+      }
 
-            if (fs.lstatSync(fullPath).isDirectory()) {
-                results = results.concat(readDirectory(fullPath));
-            } else {
-                results.push(fullPath);
-            }
-        });
+      if (fs.lstatSync(fullPath).isDirectory()) {
+        results = results.concat(readDirectory(fullPath))
+      } else {
+        results.push(fullPath)
+      }
+    })
 
-        return results;
-    };
+    return results
+  }
 
-    const filePaths = readDirectory(dir);
+  const filePaths = readDirectory(dir)
 
-    filePaths.forEach(filePath => {
-        const relativePath = path.relative(dir, filePath);
-        output += `\n--- File: ${relativePath} ---\n`;
-        output += fs.readFileSync(filePath, 'utf-8') + '\n';
-    });
+  filePaths.forEach(filePath => {
+    const relativePath = path.relative(dir, filePath)
+    output += `\n--- File: ${relativePath} ---\n`
+    output += fs.readFileSync(filePath, 'utf-8') + '\n'
+  })
 
-    return output;
+  return output
+}
+
+function shouldIgnore(relativePath, ignorePatterns) {
+  for (const pattern of ignorePatterns) {
+    if (pattern.startsWith('*')) {
+      const fileExtension = path.extname(relativePath)
+      if (fileExtension === pattern.slice(1)) {
+        return true
+      }
+    } else if (relativePath.includes(pattern)) {
+      return true
+    }
+  }
+
+  return false
 }
 
 // This method is called when your extension is deactivated
 function deactivate() {}
 
 module.exports = {
-	activate,
-	deactivate
+  activate,
+  deactivate
 }
 
 
@@ -173,7 +218,7 @@ module.exports = {
   "name": "vscode-project-structure",
   "displayName": "vscode-project-structure",
   "description": "Print the project folder structure, file name and file contents into a txt file",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "icon": "images/logo.jpeg",
   "engines": {
     "vscode": "^1.76.0"
@@ -191,11 +236,26 @@ module.exports = {
   "main": "./extension.js",
   "contributes": {
     "commands": [
-        {
-            "command": "extension.generateProjectStructure",
-            "title": "Generate Project Structure"
+      {
+        "command": "extension.generateProjectStructure",
+        "title": "Generate Project Structure"
+      }
+    ],
+    "configuration": {
+      "title": "VSCode Project Structure",
+      "properties": {
+        "vscodeProjectStructure.outputFolderPath": {
+          "type": "string",
+          "default": "docs",
+          "description": "Name of the folder to store the project_structure.txt and .project_structure_ignore files."
+        },
+        "vscodeProjectStructure.useGitIgnore": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use .gitignore file for ignoring files and folders when generating project structure."
         }
-    ]
+      }
+    }
   },
   "scripts": {
     "lint": "eslint .",
@@ -214,4 +274,85 @@ module.exports = {
     "@vscode/test-electron": "^2.2.3"
   }
 }
+
+--- File: project_structure_filter.js ---
+import * as fs from 'fs'
+
+// Parse the .project_structure_filter file into an array of filter patterns
+const filterPatterns = fs
+  .readFileSync('.project_structure_filter', 'utf-8')
+  .split('\n')
+  .map((line) => line.trim())
+
+console.log('filterPatterns:', filterPatterns)
+if (filterPatterns[filterPatterns.length - 1] === '') {
+  filterPatterns.pop()
+}
+console.log('filterPatterns:', filterPatterns)
+
+// checks if the file path contains any of the filter patterns
+function containsFilter(filePath) {
+  return filterPatterns.some((filter) => filePath.includes(filter))
+}
+
+const input = fs.createReadStream('project_structure.txt')
+const output = fs.createWriteStream('project_structure_filtered.txt')
+let keepThisSection = true
+
+input.on('data', (chunk) => {
+  const lines = chunk.toString().split('\n')
+  // remove the last line if it's empty
+
+  const filteredLines = lines.filter((line) => {
+    if (line.startsWith('--- File: ')) {
+      const filePath = line.slice('--- File: '.length).trim()
+      // console.log('filePath:', filePath)
+      keepThisSection = containsFilter(filePath)
+      // console.log('keepThisSection:', keepThisSection)
+    }
+    return keepThisSection ? line : false
+  })
+
+  output.write(filteredLines.join('\n'))
+})
+
+input.on('end', () => {
+  output.end()
+})
+
+
+--- File: project_structure_filter.py ---
+import os
+
+with open('.project_structure_filter', 'r') as file:
+    filterPatterns = [line.strip() for line in file.readlines()]
+
+if filterPatterns[-1] == '':
+    filterPatterns.pop()
+print('filterPatterns:', filterPatterns)
+
+
+def matchesFilterPatterns(filePath):
+    return (any)(filter in filePath for filter in filterPatterns)
+
+
+input = open('project_structure.txt', 'r', encoding='utf-8', errors='replace')
+output = open('project_structure_filtered.txt', 'w', encoding='utf-8')
+
+keepThisSection = True
+
+for line in input:
+
+    if line.startswith('--- File: '):
+        filePath = line[len('--- File: '):].strip()
+        print('filePath:', filePath)
+        keepThisSection = matchesFilterPatterns(filePath)
+        print('keepThisSection:', keepThisSection)
+
+    if keepThisSection:
+        output.write(line)
+
+input.close()
+output.close()
+print('Done')
 

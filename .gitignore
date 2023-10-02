@@ -1,3 +1,72 @@
+# Auto generated files
+logs
 node_modules
+package-lock.json
+pnpm-lock.yaml
+bash
+coverage
+
+# Build files
+build
+dist
+
+
+# project structure
+project_structure_filtered.txt
+project_structure.txt
+
+# Local env files
 .vscode-test/
+.circleci
+.DS_Store
+.env
+.git
+.idea
+.vscodeignore
+.vscode
+*.local
+*.log
+*.njsproj
+*.ntvs*
+*.sln
+*.suo
+*.sw?
 *.vsix
+
+# Logs
+/cypress/screenshots/
+/cypress/videos/
+coverage
+dist
+dist-ssr
+lerna-debug.log*
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Other files
+_playgrounds
+_archives
+
+
+# Not text
+\*.svg
+images
+media
+
+# Not source code
+
+
+# primary config files
+
+# secondary config files
+.eslintrc.cjs
+.eslintrc.json
+.prettierignore
+.prettierrc.json
+env.d.ts
+index.html
+nodemon.json
+postcss.config.js
+tailwind.config.js
