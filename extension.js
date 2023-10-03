@@ -15,8 +15,6 @@ function activate(context) {
   // This line of code will only be executed once when your extension is activated
   console.log('Congratulations, your extension "vscode-project-structure" is now active!')
 
-  logStuff()
-
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with  registerCommand
   // The commandId parameter must match the command field in package.json
@@ -42,7 +40,6 @@ function activate(context) {
 
 function generateProjectStructure(applyFilter = false) {
   // Defines the path to the root folder of the workspace, displays an error message if no workspace is open
-  console.log('was filter applied?', applyFilter)
   const rootPath = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined
   if (!rootPath) {
     vscode.window.showErrorMessage('Fab! No workspace folder is open')
@@ -213,34 +210,4 @@ function deactivate() {}
 module.exports = {
   activate,
   deactivate
-}
-
-const logStuff = () => {
-  const config = vscode.workspace.getConfiguration('vscodeProjectStructure')
-  console.log('config', config)
-
-  const workspaceFolders = vscode.workspace.workspaceFolders
-  console.log('workspaceFolders', workspaceFolders)
-
-  const fsPath0 = vscode.workspace.workspaceFolders[0].uri.fsPath
-  console.log('fsPath0', fsPath0)
-
-  const rootPath = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined
-  console.log('rootPath', rootPath)
-
-  const outputFolderName = config.get('outputFolderPath')
-  console.log('outputFolderName', outputFolderName) // docs
-
-  const outputFolderPath = path.join(rootPath, outputFolderName)
-  console.log('outputFolderPath', outputFolderPath) // c:\Users\fabri\Repos\_samples\shared-eslint-main\docs
-
-  // Defines the path to the ignore file within the docs folder
-  const ignoreFilePath = path.join(outputFolderPath, '.project_structure_ignore')
-  console.log('ignoreFilePath', ignoreFilePath) // c:\Users\fabri\Repos\_samples\shared-eslint-main\docs\.project_structure_ignore
-
-  const filterFilePath = path.join(outputFolderPath, '.project_structure_filter')
-  console.log('filterFilePath', filterFilePath) // c:\Users\fabri\Repos\_samples\shared-eslint-main\docs\.project_structure_filter
-
-  const files = fs.readdirSync(rootPath)
-  console.log('files', files)
 }

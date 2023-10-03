@@ -1,6 +1,6 @@
-# VSCode Project Structure
+# VSCode Project Structure Plus
 
-> Note : This is a temporary new version of the [VSCode Project Structure](https://marketplace.visualstudio.com/items?itemName=Austin-Lin.vscode-project-structure) extension developed by [Austin-Lin](https://github.com/l02162010/VSCode-Project-Structure), with some added functionalities. It will be removed from the market place as soon as these functionalities are added into the original extension.
+> Disclaimer: This is an enhanced version of the [VSCode Project Structure](https://marketplace.visualstudio.com/items?itemName=Austin-Lin.vscode-project-structure) extension developed by [Austin-Lin](https://github.com/l02162010/VSCode-Project-Structure). It includes additional functionalities not present in the original version. Once the original extension incorporates these enhancements, this version will be deprecated in favor of the original.
 
 ## Description
 
