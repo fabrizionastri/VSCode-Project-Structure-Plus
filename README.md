@@ -55,8 +55,6 @@ src
 package.json
 ```
 
-This will only display content of the files contained in the `src` directory, as well as the `package.json` file
-
 ## Requirements
 
 Visual Studio Code version 1.76.0 or higher.
@@ -70,7 +68,7 @@ To change extension settings, open your Visual Studio Code settings (File > Pref
 
 ## Release Notes
 
-- 0.1.0
+- 0.1.2
   - Added option to change the configuration/output folder
   - Added option to apply filter to output file
 - 0.0.1
