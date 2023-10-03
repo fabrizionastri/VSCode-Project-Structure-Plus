@@ -70,13 +70,11 @@ To change extension settings, open your Visual Studio Code settings (File > Pref
 
 ## Release Notes
 
-0.1.0
-
-- Added option to change the configuration/output folder
-- Added option to apply filter to output file
-  0.0.1
-
-- Initial release of VSCode Project Structure.
+- 0.1.0
+  - Added option to change the configuration/output folder
+  - Added option to apply filter to output file
+- 0.0.1
+  - Initial release of VSCode Project Structure.
 
 ## Contributing
 
