@@ -1,5 +1,7 @@
 # VSCode Project Structure
 
+> Note : This is a temporary new version of the [VSCode Project Structure](https://marketplace.visualstudio.com/items?itemName=Austin-Lin.vscode-project-structure) extension developed by [Austin-Lin](https://github.com/l02162010/VSCode-Project-Structure), with some added functionalities. It will be removed from the market place as soon as these functionalities are added into the original extension.
+
 ## Description
 
 VSCode Project Structure is a Visual Studio Code extension that allows you to generate a txt file with the folder structure, file name, and file contents of your project.

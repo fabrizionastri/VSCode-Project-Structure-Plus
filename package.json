@@ -10,7 +10,7 @@
   "categories": [
     "Other"
   ],
-  "publisher": "Austin-Lin",
+  "publisher": "FabrizioNastri",
   "repository": {
     "type": "git",
     "url": "https://github.com/l02162010/VSCode-Project-Structure"
@@ -37,7 +37,7 @@
         "vscodeProjectStructure.outputFolderPath": {
           "type": "string",
           "default": "docs",
-          "description": "Name of the folder to store the project_structure.txt and .project_structure_ignore files."
+          "description": "Name of the folder to store the .project_structure_ignore and .project_structure_ignore files, and the output files"
         },
         "vscodeProjectStructure.useGitIgnore": {
           "type": "boolean",
