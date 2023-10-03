@@ -158,25 +158,13 @@ function getFileContents(rootPath, ignoreFiles, filterFiles, applyFilter = false
       const fullPath = path.join(directory, file)
       const relativePath = path.relative(rootPath, fullPath)
 
-      console.log(
-        'readDirectory: ',
-        relativePath,
-        ' →  ignore : ',
-        matchesPattern(relativePath, ignoreFiles),
-        ' →  filter : ',
-        matchesPattern(relativePath, filterFiles)
-      )
-
-      // Ignore files that match the ignore patterns
       if (matchesPattern(relativePath, ignoreFiles)) {
-        console.log('     → ignored')
         return
       }
 
       if (fs.lstatSync(fullPath).isDirectory()) {
         results = results.concat(readDirectory(fullPath))
       } else {
-        console.log('     → added')
         results.push(fullPath)
       }
     })
@@ -190,10 +178,8 @@ function getFileContents(rootPath, ignoreFiles, filterFiles, applyFilter = false
     // If apply filter is on, ignore files that don't match the filter patterns
     const relativePath = path.relative(rootPath, filePath)
     if (applyFilter && !matchesPattern(filePath, filterFiles)) {
-      console.log(`getFileContents : ${relativePath} → not in filter`)
       return
     }
-    console.log(`getFileContents : ${relativePath} → added`)
     output += `\n--- File: ${relativePath} ---\n`
     output += fs.readFileSync(filePath, 'utf-8') + '\n'
   })
