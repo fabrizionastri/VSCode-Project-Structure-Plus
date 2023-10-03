@@ -16,14 +16,15 @@ project_structure_filtered.txt
 project_structure.txt
 
 # Local env files
-.vscode-test/
 .circleci
 .DS_Store
 .env
 .git
+.gitignore
 .idea
-.vscodeignore
 .vscode
+.vscode-test/
+.vscodeignore
 *.local
 *.log
 *.njsproj
@@ -46,8 +47,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # Other files
-_playgrounds
 _archives
+_playground
 
 
 # Not text
