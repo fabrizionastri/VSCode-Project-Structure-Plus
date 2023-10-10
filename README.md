@@ -21,6 +21,7 @@ VSCode Project Structure is a Visual Studio Code extension that allows you to ge
 
 - Generates a txt file with the folder/file structure tree and full file contents of your project.
 - Option to exclude certain files and folders based on patterns found in the `.project_structure_ignore` file and/or in the `.gitignore` file
+- Option to only include file content for files and folders based on patterns found in the `.project_structure_filter` file
 - Customize the folder where the configuration and output files are located (`docs` by default)
 
 ## Usage
@@ -32,11 +33,14 @@ VSCode Project Structure is a Visual Studio Code extension that allows you to ge
 - Wait for the extension to finish generating the file.
 - Use `.project_structure_ignore` to list your **ignore patterns**,
 - Use `.project_structure_filter` to list your **filter patterns**
+- Lines starting with `#` will be ignored in the `.project_structure_ignore` and `.project_structure_filter` files
 
 By default:
 
-- **Ignore patterns** cinlude the ones defined in your `.gitignore` file
-- all configuration and output files are located in the `docs` directory
+- **Ignore patterns** inlude the ones defined in your `.gitignore` file
+- All configuration and output files are located in the `docs` directory
+
+Both of the options can be changed in the extension settings.
 
 ## Examples
 
@@ -68,6 +72,8 @@ To change extension settings, open your Visual Studio Code settings (File > Pref
 
 ## Release Notes
 
+- 0.1.4
+  - lines starting with `#` will be ignored in the `.project_structure_ignore` and `.project_structure_filter` files
 - 0.1.3
   - Added option to change the configuration/output folder
   - Added option to apply filter to output file

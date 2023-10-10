@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.1.4] - 2023-10-10
+
+### Added
+
+- Lines starting with `#` will be ignored in the `.project_structure_ignore` and `.project_structure_filter` files
+
 ## [0.1.3] - 2023-10-03
 
 ### Added

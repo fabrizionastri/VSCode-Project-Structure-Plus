@@ -189,12 +189,19 @@ function getFileContents(rootPath, ignoreFiles, filterFiles, applyFilter = false
 
 function matchesPattern(relativePath, listOfPatterns) {
   for (const pattern of listOfPatterns) {
+    // Ignore empty lines and comments
+    if (pattern.trim() === '' || pattern.startsWith('#')) {
+      continue
+    }
+    // Check if pattern is a file extension
     if (pattern.startsWith('*')) {
+      // include file if the extension matches
       const fileExtension = path.extname(relativePath)
       if (fileExtension === pattern.slice(1)) {
         return true
       }
     } else if (relativePath.includes(pattern)) {
+      // include file if the relative path includes the pattern
       return true
     }
   }
