@@ -4,7 +4,12 @@ All notable changes to the "vscode-project-structure" extension will be document
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [Unreleased]
+## [0.1.5] - 2023-10-12
+
+### Added
+
+- Ignore and filter patterns can include (all or part of) relative paths, including (all or part of) file names and folder names.
+- Accepted path delimiters include "/", "\\" and "\\\\" (to make it compatible with Windows, Linux and Mac)
 
 ## [0.1.4] - 2023-10-10
 

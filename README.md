@@ -44,18 +44,18 @@ Both of the options can be changed in the extension settings.
 
 ## Examples
 
-This `.project_structure_ignore` file will cause Project Structure to ignore: the node_modules and dist directories, and any files with the .log extension:
+This `.project_structure_ignore` file will cause Project Structure Plus to ignore: the 'node_modules' directory, 'src/entities/index.js' file and any files with the '.log' extension:
 
 ```
 node_modules
-dist
+src/entities/index.js
 *.log
 ```
 
-This `.project_structure_filter` file will cause Project Structure to only provide full content of the package.json file, as well as any in the src folder (excluding those that match the ignore pattern):
+This `.project_structure_filter` file will cause Project Structure to only provide full content of the 'package.json' file, as well as any files in the 'src/entities' folder and subfolders (excluding 'src/entities/index.js' which matches the ignore pattern). _Note that both '\\' and '/' are accepted._
 
 ```
-src
+src\entities
 package.json
 ```
 
@@ -72,6 +72,9 @@ To change extension settings, open your Visual Studio Code settings (File > Pref
 
 ## Release Notes
 
+- 0.1.5
+  - Ignore and filter patterns can include (all or part of) relative paths, including (all or part of) file names and folder names.
+  - Accepted path delimiters include "/", "\\" and "\\\\" (to make it compatible with Windows, Linux and Mac)
 - 0.1.4
   - lines starting with `#` will be ignored in the `.project_structure_ignore` and `.project_structure_filter` files
 - 0.1.3

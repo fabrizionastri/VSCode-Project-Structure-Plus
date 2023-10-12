@@ -77,7 +77,9 @@ function generateProjectStructure(applyFilter = false) {
     outputPath = path.join(outputFolderPath, 'project_structure_filtered.txt')
     // Extract list of patterns for files to filter
     const ignoreFileContent = fs.readFileSync(filterFilePath, 'utf-8')
-    filterFiles = ignoreFileContent.split('\n').filter(line => line.trim() !== '')
+    filterFiles = normalize(ignoreFileContent)
+      .split('\n')
+      .filter(line => line.trim() !== '')
   } else {
     // if ignoreFilePath doesn't exist, create it
     if (!fs.existsSync(ignoreFilePath)) {
@@ -90,7 +92,9 @@ function generateProjectStructure(applyFilter = false) {
   // Extract list of patterns for files to ignore
   if (fs.existsSync(ignoreFilePath)) {
     const ignoreFileContent = fs.readFileSync(ignoreFilePath, 'utf-8')
-    ignoreFiles = ignoreFileContent.split('\n').filter(line => line.trim() !== '')
+    ignoreFiles = normalize(ignoreFileContent)
+      .split('\n')
+      .filter(line => line.trim() !== '')
   }
 
   // Merge ignore file patterns with those from .gitignore file if this option is enabled
@@ -105,7 +109,7 @@ function generateProjectStructure(applyFilter = false) {
 
   let output = ''
   output += '--- Folder Structure ---\n'
-  output += getFolderStructure(rootPath, ignoreFiles, 0)
+  output += getFolderStructure(rootPath, rootPath, ignoreFiles, 0)
   output += '\n--- File Contents ---\n'
   output += getFileContents(rootPath, ignoreFiles, filterFiles, applyFilter)
 
@@ -118,14 +122,14 @@ function generateProjectStructure(applyFilter = false) {
   )
 }
 
-function getFolderStructure(rootPath, ignoreFiles, level) {
+function getFolderStructure(rootPath, folderPath, ignoreFiles, level) {
   let output = ''
 
-  if (fs.existsSync(rootPath)) {
-    const files = fs.readdirSync(rootPath)
+  if (fs.existsSync(folderPath)) {
+    const files = fs.readdirSync(folderPath)
     files.forEach((file, index) => {
-      const fullPath = path.join(rootPath, file)
-      const relativePath = path.relative(rootPath, fullPath)
+      const fullPath = path.join(folderPath, file)
+      const relativePath = normalize(path.relative(rootPath, fullPath))
 
       if (matchesPattern(relativePath, ignoreFiles)) {
         return
@@ -136,8 +140,9 @@ function getFolderStructure(rootPath, ignoreFiles, level) {
       const indent = ' '.repeat(level * 4) + (level > 0 ? prefix : '')
 
       if (fs.lstatSync(fullPath).isDirectory()) {
+        newFolderPath = path.join(folderPath, file)
         output += indent + `[${file}]\n`
-        output += getFolderStructure(fullPath, ignoreFiles, level + 1)
+        output += getFolderStructure(rootPath, newFolderPath, ignoreFiles, level + 1)
       } else {
         output += indent + file + '\n'
       }
@@ -200,7 +205,7 @@ function matchesPattern(relativePath, listOfPatterns) {
       if (fileExtension === pattern.slice(1)) {
         return true
       }
-    } else if (relativePath.includes(pattern)) {
+    } else if (normalize(relativePath).includes(pattern)) {
       // include file if the relative path includes the pattern
       return true
     }
@@ -215,4 +220,8 @@ function deactivate() {}
 module.exports = {
   activate,
   deactivate
+}
+
+function normalize(inputPath) {
+  return inputPath.replace(/\\+/g, '/').replace(/\\/g, '/')
 }
